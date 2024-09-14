@@ -36,10 +36,10 @@ app.use(bodyParser.json());
 
 // MySQL connection
 const db = mysql.createConnection({
-  host: '127.0.0.1',
+  host: 'XXXX',
   port:'3306',
-  user: 'localuser',
-  password: 'Root!12345#', // Your MySQL password
+  user: 'XXXX',
+  password: 'XXXX', // Your MySQL password
   database: 'gic' // Replace with your database name
 });
 
