@@ -1,0 +1,154 @@
+<%- include('partials/header') -%>
+
+  <main class="main">
+
+    <!-- Employees by cafe -->
+    <section id="about" class="about section">
+
+      <!-- Section Title -->
+      <div class="container section-title" data-aos="fade-up">
+        <h2>Employees</h2>        
+      </div><!-- End Section Title -->
+
+      <div class="container">
+        <div class="row">
+          <div class="col-md-2">
+            <label for="cafename">Cafe:</label>
+          </div>
+           <div class="col-md-4">
+               <select id="cafes" name="cafes"  class="form-select"> 
+                <option value="">Select Cafe</option>  
+                </select>
+          </div>
+          <div class="col-md-6">
+              <p><a href="/addEmployee"><button type="button" class="btn btn-primary" style="float: right;">Add Employee</button></a>
+          </p>
+          </div>
+      </div>
+        <div class="row">
+          
+
+        <!------------------Listing Employees-------------------------->
+          <table class="table table-striped table-bordered table-hover" id="empTable">
+          <thead>
+            <tr> 
+            <th scope="col">ID</th>            
+              <th scope="col">Name</th>
+              <th scope="col">Email Address</th>
+              <th scope="col">Phone Number</th>
+              <th scope="col">Cafe</th>
+              <th scope="col">Hire Date</th>
+              <th scope="col">Days Worked</th>
+            </tr>
+          </thead>
+          <tbody id="empbycafe">
+            
+             <% emps.forEach(emp => { %>
+            <tr>
+              <td class="empname"><%= emp.empid %></td>
+              <td class="empname"><%= emp.emp_name %></td>
+              <td width="10%" class="empmail"><%= emp.email_address%></td>
+              <td class="empphone"><%= emp.phone_number %></td>
+              <td width="10%" class="empphone"><%= emp.name %></td>
+              <td width="10%"><%= emp.hire_date%></td>
+              <td width="10%"><%= emp.days_worked%></td>
+            </tr>
+           
+            <% }) %>           
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </section><!-- /Add Employee -->
+  </main>
+  <%- include('partials/footer') -%>
+  <script>
+$(document).ready(function(){
+
+  $('#empTable').dataTable( {
+    //"dom": 'rtip',
+      "bInfo" : false,
+    "searching": true,
+    "pagingType": "simple_numbers",
+    "pageLength": 5,
+    //"order": [[1, 'desc']] 
+  });
+
+  function loadcafelist(){
+    $.ajax({
+      url: '/employees-cafelist', // URL to send the request to
+      method: 'GET', // HTTP method
+      dataType: 'json', // Expected data type from server
+      success: function(data) {
+        // Clear previous data
+        $('#cafes').empty();
+        
+        // Iterate over the data and append it to the container
+        let cafeOptions = '<option value="">Select Cafe</option>';
+        data.forEach(item => {
+          cafeOptions += ` <option value="${item.cafeid}">${item.name}</option>`;
+        });
+        $('#cafes').html(cafeOptions);
+      },
+      error: function(xhr, status, error) {
+        console.error('Error fetching data:', status, error);
+        $('#employees').html('<p>An error occurred while fetching data.</p>');
+      }
+    });
+  }
+
+
+ function loadempworkingdays(cafeID){
+  $('#empbycafe').html('');
+   $.ajax({
+      url:  `/empbycafe?cafeid=${cafeID}`, // URL to send the request to
+      method: 'GET', // HTTP method
+      dataType: 'json', // Expected data type from server
+      success: function(data) {
+        console.log(data);
+        //Iterate over the data and append it to the container
+        data.forEach(item => {
+          $('#empbycafe').append(` <tr>
+                <td class="empname">${item.empid }</td>
+              <td class="empname">${item.emp_name }</td>
+              <td width="10%" class="empmail">${item.email_address}</td>
+              <td class="empphone">${item.phone_number }</td>
+              <td width="10%" class="empphone">${item.name }</td>
+              <td width="10%">${ item.hire_date}</td>
+              <td width="10%">${item.days_worked}</td>
+                  </tr>`);
+        });
+        
+        
+      },
+      error: function(xhr, status, error) {
+        console.error('Error fetching data:', status, error);
+        //$('#employees').html('<p>An error occurred while fetching data.</p>');
+      }
+    });
+
+ }
+
+
+
+
+  loadcafelist();
+
+  // Event handler for cafe selection
+      $('#cafes').change(function() { alert("select cafe id" + $(this).val());
+        const cafeID = $(this).val();
+        if (cafeID) {
+          loadempworkingdays(cafeID); // Fetch and display states
+        } else {
+          $('#cafeLocation').html('<input type="text" value="">'); // Reset location
+        }
+      });
+  
+});
+
+</script>
+
+</body>
+
+</html>

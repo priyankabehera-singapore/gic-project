@@ -1,0 +1,169 @@
+<%- include('partials/header') -%>
+  <main class="main">
+
+    <!-- List Cafe-->
+    <section id="cafelist" class="listcafe section">
+
+      <!-- Section Title -->
+      <div class="container section-title" data-aos="fade-up">
+        <h2>Cafes</h2>
+       
+      </div><!-- End Section Title -->
+
+      <div class="container">
+        <div class="row">
+            <p><button type="button" class="btn btn-default btn-submit" id="new-cafe" style="float: left;">Add Cafe</button></p>
+        <!------------------Listing Cafes-------------------------->
+          <table class="table table-striped table-bordered table-hover" id="cafeTable">
+          <thead>
+            <tr>
+              <th scope="col">Name</th>
+              <th scope="col">Location</th>
+              <th scope="col">Image</th>
+              <th scope="col">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+              
+             <% cafes.forEach(cafe => { %>
+            <tr>
+              <td ><%= cafe.name %></td>
+              <td><%= cafe.location%></td>              
+              <td ><img src="../uploads/<%= cafe.image %>" width="50" height="50"></td>
+              <td>
+                 <a class="btn btn-primary" href="/editcafe/<%= cafe.cafeid %>">Edit</a>
+                  <form style="display: inline;" action="/cafedelete/<%= cafe.cafeid %>?_method=DELETE" method="POST">
+                      <input type="hidden" name="_method" value="DELETE">
+                      <button style="cursor: pointer;" type="submit" class="btn btn-danger ml-2">Delete</button>
+                  </form>          
+              </td>
+            </tr>
+            <% }) %>           
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </section><!-- /List Cafe -->
+
+
+<!-- Add Cafe-->
+  <section id="cafepost" class="listcafe section" style="display:none;">
+    <!-- Section Title -->
+      <div class="container section-title" data-aos="fade-up">
+        <h2>Add Cafe</h2>
+        <p><a href="/"><button type="button" class="btn btn-primary" style="float: right;">Back to listing</button></a></p>
+      </div><!-- End Section Title -->
+      <div class="container">
+        <div class="row gy-4">
+           <form action="/cafe" method="post" class="" data-aos="" data-aos-delay="" enctype="multipart/form-data">
+            <div class="row">
+              <div class="col-md-3">
+                <label for="cafename">Name</label>
+              </div>
+               <div class="col-md-6">
+                  <input class="form-control" type="text" id="cafename" name="cafename" required>
+              </div>
+            </div>
+             <div class="row">
+              <div class="col-md-3">
+                <label for="cafename">Logo</label>
+              </div>
+               <div class="col-md-6">
+                  <input type="file" name="file" class="form-control" required>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-3">
+                <label for="cafename">Location</label>
+              </div>
+               <div class="col-md-6">
+                  <input class="form-control" type="text" id="location" name="location" required>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-3">
+                <label for="cafename">Description</label>
+              </div>
+               <div class="col-md-6">
+                  <textarea class="form-control" name="cafedesc" required></textarea>
+              </div>
+            </div>
+             <div class="row">
+              <div class="col-md-3"></div>
+              <div class="col-md-3"> <button type="submit" class="btn btn-primary">Submit</button></div>
+              <div class="col-md-6"></div>          
+            </div>
+           </form>
+        </div>
+      </div>
+  </section>
+
+    
+<!-- /Add Cafe -->   
+</main>
+<%- include('partials/footer') -%>
+  
+<script>
+$(document).ready(function(){
+
+  $.ajax({
+      url: '/employees-cafelist', // URL to send the request to
+      method: 'GET', // HTTP method
+      dataType: 'json', // Expected data type from server
+      success: function(data) {
+        // Clear previous data
+        $('#employees').empty();
+        
+        // Iterate over the data and append it to the container
+        data.forEach(item => {
+          $('#employees').append(`          
+            <option value="${item.id}">${item.emp_name}</option>
+          `);
+        });
+      },
+      error: function(xhr, status, error) {
+        console.error('Error fetching data:', status, error);
+        $('#employees').html('<p>An error occurred while fetching data.</p>');
+      }
+    });
+
+  $("#new-cafe").click(function(){ 
+    $('#cafelist').hide();
+    $('#cafepost').show();
+  });
+
+
+  $('#cafeTable').dataTable( {
+  //"dom": 'rtip',
+    "bInfo" : false,
+  "searching": true,
+  "pagingType": "simple_numbers",
+  "pageLength": 5,
+  "order": [[1, 'desc']] 
+} );
+
+
+  $('[data-toggle="tooltip"]').tooltip();
+  var actions = $("table td:last-child").html();
+  // Append table with add row form on add new button click
+    $(".add-new").click(function(){
+    $(this).attr("disabled", "disabled");
+    var index = $("table tbody tr:last-child").index();
+        var row = '<tr>' +
+            '<td><input type="text" class="form-control" name="name" id="name"></td>' +
+            '<td><input type="text" class="form-control" name="department" id="department"></td>' +
+            '<td><input type="text" class="form-control" name="phone" id="phone"></td>' +
+      '<td>' + actions + '</td>' +
+        '</tr>';
+      $("table").append(row);   
+    $("table tbody tr").eq(index + 1).find(".add, .edit").toggle();
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+  
+});
+</script>
+
+</body>
+
+</html>

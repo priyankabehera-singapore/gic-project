@@ -1,0 +1,87 @@
+<%- include('partials/header') -%>
+  <main class="main">
+
+    <!-- Search by location -->
+    <section id="about" class="about section">
+
+      <!-- Section Title -->
+      <div class="container section-title" data-aos="fade-up">
+        <h2>Search by location</h2>        
+      </div><!-- End Section Title -->
+
+      <div class="container">
+      <div class="row">
+          <div class="col-md-2">
+            <label for="cafename">Location:</label>
+          </div>
+           <div class="col-md-4">
+               <select id="clocation" name="clocation"  class="form-select"> 
+                <option value="">Select location</option>
+               <% locs.forEach(loc => { %>
+                   <option value="<%= loc.location %>"><%= loc.location %></option>
+                <% }) %>   
+                </select>
+          </div>
+      </div>
+        <div class="row">
+        <!------------------Listing Employees-------------------------->
+          <table class="table table-striped table-bordered table-hover" id="clocaempTable">
+          <thead>
+            <tr>  
+            <th scope="col">ID</th>           
+              <th scope="col">Name</th>
+               <th scope="col">Image</th>
+              <th scope="col">Description</th>
+              <th scope="col">Employees</th>             
+            </tr>
+          </thead>
+          <tbody id="clocemp">
+                    
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </section><!-- /Search by location-->
+  </main>
+  <%- include('partials/footer') -%>
+  <script>
+  $(document).ready(function(){
+    function loadlocationEmpNos(clocation){
+        $('#clocemp').html('');
+        $.ajax({
+              url: `/api/cafe/${clocation}`,
+              method: 'GET',
+              dataType: 'json',
+              success: function(data) {
+                data.forEach(locitem => {
+                  $('#clocemp').append(`<tr> 
+                        <td>${locitem.cafeid}</td>
+                        <td>${locitem.cafename}</td>
+                        <td><img src="../uploads/${locitem.cafeimage}" width="50" height="50"></td>
+                        <td>${locitem.cafedesc}</td>  
+                        <td>${locitem.total_employees}</td>                              
+                        </tr>
+                    `);
+                });
+                
+              },
+              error: function(xhr, status, error) {
+                console.error('Error fetching states:', status, error);
+              }
+        });
+    }
+
+      $('#clocation').change(function() {
+        const cloc = $(this).val();
+        alert(cloc);
+        if (cloc) {
+          loadlocationEmpNos(cloc); // Fetch and display states
+        } else {
+          $('#cafeLocation').html('<input type="text" value="">'); // Reset location
+        }
+      });
+
+ });
+  </script>
+

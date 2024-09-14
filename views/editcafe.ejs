@@ -1,0 +1,64 @@
+<%- include('partials/header') -%>
+<main class="main">
+
+    <!-- Edit Employee -->
+    <section id="about" class="about section">
+
+      <!-- Section Title -->
+      <div class="container section-title" data-aos="fade-up">
+        <h2>Edit Employee</h2>
+
+        <p></p>
+      </div><!-- End Section Title -->
+
+      <div class="container">
+        <p><a href="/empList"><button type="button" class="btn btn-primary" style="float: right;">Back to listing</button></a></p>
+        <div class="row gy-4">
+        <!------------------START OF FORM FOR EMPLOYEE-------------------------->
+        <form action="/cafe/<%= cafeedit.cafeid %>?_method=PUT" method="post" class="" data-aos="" data-aos-delay="" enctype="multipart/form-data">
+        	<input type="hidden" name="_method" value="PUT">
+            <div class="row">
+              <div class="col-md-3">
+                <label for="cafename">Name</label>
+              </div>
+               <div class="col-md-6">
+                  <input class="form-control" type="text" id="cafename" name="cafename" value="<%= cafeedit.name %>" required>
+              </div>
+            </div>
+             <div class="row">
+              <div class="col-md-3">
+                <label for="cafename">Logo</label>
+              </div>
+               <div class="col-md-6">
+                  <input type="file" name="file" class="form-control"> <p><img src="../uploads/<%= cafeedit.image %>" width="50" height="50"><input type="hidden" name="cafeimage" value="<%= cafeedit.image %>"></p>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-3">
+                <label for="cafename">Location</label>
+              </div>
+               <div class="col-md-6">
+                  <input class="form-control" type="text" id="location" name="location" value="<%= cafeedit.location %>" required>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-3">
+                <label for="cafename">Description</label>
+              </div>
+               <div class="col-md-6">
+                  <textarea class="form-control" name="cafedesc" required><%= cafeedit.description %></textarea>
+              </div>
+            </div>
+             <div class="row">
+              <div class="col-md-3"></div>
+              <div class="col-md-3"> <button type="submit" class="btn btn-primary">Submit</button></div>
+              <div class="col-md-6"></div>          
+            </div>
+           </form>
+        </div>
+
+      </div>
+    </section><!-- /Add Employee -->
+  </main>
+
+  <%- include('partials/footer') -%>

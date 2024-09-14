@@ -1,0 +1,137 @@
+<%- include('partials/header') -%>
+
+  <main class="main">
+
+    <!-- Add Employee -->
+    <section id="about" class="about section">
+
+      <!-- Section Title -->
+      <div class="container section-title" data-aos="fade-up">
+        <h2>Add Employee</h2>
+
+        <p></p>
+      </div><!-- End Section Title -->
+
+      <div class="container">
+        <p><a href="/empList"><button type="button" class="btn btn-primary" style="float: right;">Back to listing</button></a></p>
+        <div class="row gy-4">
+        <!------------------START OF FORM FOR EMPLOYEE-------------------------->
+        <form action="/employee" method="post" class="" data-aos="" data-aos-delay="">
+          <div class="row">
+              <div class="form-group row">
+                <div class="col-md-3"><label for="employeeName">Name:</label></div>
+                <div class="col-md-6"><input class="form-control" type="text" id="ename" name="empname" required></div>
+              </div>
+          </div>
+          <div class="row">
+            <div class="form-group row">
+              <div class="col-md-3"><label for="employeeEmail">Email Address:</label></div>
+              <div class="col-md-6"><input class="form-control" type="email" id="empemail" name="empEmail" required></div>
+            </div>
+        </div>
+        <div class="row">
+          <div class="form-group row">
+            <div class="col-md-3"><label for="employeePhone">Phone Number:</label></div>
+            <div class="col-md-6"><input class="form-control" type="text" id="ephone" name="empPhone" required></div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group row">
+            <div class="col-md-3"><label for="employeeGender">Gender:</label></div>
+            <div class="col-md-6"><input class="form-check-input" type="radio"  name="empGender" value="male"><label class="form-check-label" for="flexRadioDefault2">Male</label><input class="form-check-input" type="radio" name="empGender" value="female"><label class="form-check-label" for="flexRadioDefault2">Female</label></div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-3">
+            <label for="cafename">Hire Date:</label>
+          </div>
+           <div class="col-md-6">
+              <input type="date" class="form-control" name="hiredate">
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-3">
+            <label for="cafename">Cafe:</label>
+          </div>
+           <div class="col-md-6">
+              <select id="cafes" name="cafe" required class="form-select">
+                <option class="defaultval" value="" disabled selected>Select your cafe</option>                 
+              </select>
+          </div>
+        </div>
+         <div class="row">
+          <div class="col-md-3">
+            <label for="cafename">Location:</label>
+          </div>
+           <div class="col-md-6">
+              <input type="text" class="form-control" id="cafeLocation" name="location" readonly>
+          </div>
+        </div>
+        <div class="row">  
+          <div class="col-md-3"></div>
+          <div class="col-md-6"><input type="submit" class="btn btn-primary"></div>
+        </div>
+        </form>
+        </div>
+
+      </div>
+    </section><!-- /Add Employee -->
+  </main>
+
+  <%- include('partials/footer') -%>
+  <script>
+    $(document).ready(function(){
+
+      $.ajax({
+          url: '/employees-cafelist', // URL to send the request to
+          method: 'GET', // HTTP method
+          dataType: 'json', // Expected data type from server
+          success: function(data) {
+            // Clear previous data
+            $('#cafes').empty();
+            // Iterate over the data and append it to the container
+            let cafeOptions = '<option value="">Select Cafe</option>';
+            data.forEach(item => {
+              /*$('#cafes').append(cafeOptions += `          
+                <option value="${item.cafeid}">${item.name}</option>
+              `);*/
+
+              cafeOptions += `<option value="${item.cafeid}">${item.name}</option>`;
+            });
+            $('#cafes').html(cafeOptions);
+          },
+          error: function(xhr, status, error) {
+            console.error('Error fetching data:', status, error);
+            $('#employees').html('<p>An error occurred while fetching data.</p>');
+          }
+      });
+
+       // Function to load cafe location based on selected cafe id
+        function loadCafeLocation(cafeid) {
+          $.ajax({
+            url: `/api/location/${cafeid}`,
+            method: 'GET',
+            dataType: 'json',
+            success: function(data) {
+              data.forEach(locitem => {
+                $('#cafeLocation').val(locitem.location); 
+              });
+              
+            },
+            error: function(xhr, status, error) {
+              console.error('Error fetching states:', status, error);
+            }
+          });
+        }
+
+      // Event handler for cafe selection
+      $('#cafes').change(function() { alert("select cafe id" + $(this).val());
+        const cafeID = $(this).val();
+        if (cafeID) {
+          loadCafeLocation(cafeID); // Fetch and display states
+        } else {
+          $('#cafeLocation').html('<input type="text" value="">'); // Reset location
+        }
+      });
+    });
+  </script>
