@@ -21,7 +21,7 @@ docker build -t your-container-image .
 
 -docker run -p 3000:3000 my-node-app : Change the ports accordingly(If creates error, then change the port of the application and rebuild the image)
 
--Run the application as http://localhost:3000
+-Run the application as http://localhost:4002
 
 
 
